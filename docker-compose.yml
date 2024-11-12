@@ -7,9 +7,31 @@ services:
     # user: root
     volumes:
       - ./:/app
+      - ./jupyter_lab_config:/root/.jupyter/lab/user-settings
     working_dir: /app
     ports:
-      - "8000:8000"
+      - "8888:8888"
+    networks: #Postgres と連結するために宣言
+       - mlnet
     # command: chainlit run main.py --host 0.0.0.0
-    command: jupyter lab --ip=0.0.0.0 --allow-root --NotebookApp.token='' --port=8000
+    command: jupyter lab --ip=0.0.0.0 --allow-root --NotebookApp.token='' --port=8888
+  # https://cookbook.chromadb.dev/running/running-chroma/#docker
+  chromadb:
+    # https://github.com/chroma-core/chroma/issues/3073
+    image: chromadb/chroma:0.5.18
+    volumes:
+      - ./chromadb:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma # this is the default path, change it as needed
+      - ANONYMIZED_TELEMETRY=${ANONYMIZED_TELEMETRY:-TRUE}
+    ports:
+      - 8000:8000
+    networks: #Postgres と連結するために宣言
+       - mlnet
+
+networks: #bridge はホストの任意のポートをコンテナのポートにマップできる。
+ mlnet:
+  driver: bridge
+  
   

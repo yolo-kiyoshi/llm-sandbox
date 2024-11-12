@@ -8,7 +8,7 @@ EXPOSE 8000
 
 COPY poetry.lock pyproject.toml ./
 
-RUN pip install poetry
-
-RUN poetry config virtualenvs.create false \
-  && poetry install
+RUN pip install poetry \
+  && poetry config virtualenvs.create false \
+  && poetry install \
+  && python -m spacy download ja_core_news_sm
