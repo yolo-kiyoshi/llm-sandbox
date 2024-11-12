@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM --platform=linux/amd64 python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1
 
@@ -10,5 +10,6 @@ COPY poetry.lock pyproject.toml ./
 
 RUN pip install poetry \
   && poetry config virtualenvs.create false \
-  && poetry install \
-  && python -m spacy download ja_core_news_sm
+  && poetry install
+
+RUN python -m spacy download ja_core_news_sm
